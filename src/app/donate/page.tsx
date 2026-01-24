@@ -34,7 +34,7 @@ export default function DonatePage() {
 
     if (step === 'receipt') {
         return (
-            <div className="container py-20 max-w-2xl text-center">
+            <div className="container py-20 max-w-2xl mx-auto text-center">
                 <div className="mb-6 flex justify-center">
                     <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center text-green-600">
                         <CheckCircle className="h-10 w-10" />

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from "@/lib/utils";
 import { Button } from '@/components/ui/button';
-import { Heart, Menu, User, LogOut, Settings } from 'lucide-react';
+import { Heart, Menu, User, LogOut, Settings, Sparkles } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from 'react';
+import { GoogleTranslate } from '@/components/google-translate';
 import { logoutUser, updateUserProfile } from '@/app/actions';
 
 interface NavbarProps {
@@ -48,6 +49,7 @@ export function Navbar({ user }: NavbarProps) {
         { href: '/impact', label: 'Impact' },
         { href: '/gallery', label: 'Gallery' },
         { href: '/volunteer', label: 'Volunteer' },
+        { href: '/trust', label: 'Trust' },
     ];
 
     const handleLogout = async () => {
@@ -67,7 +69,7 @@ export function Navbar({ user }: NavbarProps) {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between">
+            <div className="container flex h-16 items-center justify-between px-4 md:px-6">
                 <div className="flex items-center gap-2">
                     <Link href="/" className="flex items-center space-x-2">
                         <Heart className="h-6 w-6 text-red-500 fill-current" />
@@ -96,7 +98,8 @@ export function Navbar({ user }: NavbarProps) {
                     ))}
                 </nav>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 md:gap-4">
+                    <GoogleTranslate />
                     {user ? (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

@@ -17,11 +17,11 @@ export default function Home() {
         </div>
 
         <div className="container relative z-20 space-y-8 py-20 flex flex-col items-center text-center">
-          <div className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium backdrop-blur-sm">
+          <Link href="/donate" className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-medium backdrop-blur-sm hover:bg-white/20 transition-colors cursor-pointer">
             <span className="mr-2 rounded-full bg-primary px-2 py-0.5 text-xs font-bold text-white">NEW</span>
             <span className="text-slate-200">Winter Donation Drive is live!</span>
             <ChevronRight className="ml-1 h-4 w-4 text-slate-400" />
-          </div>
+          </Link>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight max-w-4xl leading-tight">
             Empowering Communities, <br />

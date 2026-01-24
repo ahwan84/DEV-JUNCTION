@@ -1,111 +1,166 @@
 {
-    "volunteers": [
+  "volunteers": [
+    {
+      "id": "1",
+      "name": "Alice Johnson",
+      "email": "alice@example.com",
+      "phone": "123-456-7890",
+      "skills": [
+        "Teaching",
+        "First Aid"
+      ],
+      "availability": "Weekends",
+      "status": "APPROVED",
+      "password": "password123",
+      "joinedDate": "2026-01-24T10:00:00.000Z",
+      "rating": 4.5,
+      "reviews": [
         {
-            "id": "1",
-            "name": "Alice Johnson",
-            "email": "alice@example.com",
-            "phone": "123-456-7890",
-            "skills": [
-                "Teaching",
-                "First Aid"
-            ],
-            "availability": "Weekends",
-            "status": "APPROVED",
-            "password": "password123",
-            "joinedDate": "2026-01-24T10:00:00.000Z",
-            "rating": 4.5,
-            "reviews": [
-                {
-                    "id": "r1",
-                    "author": "Community Center",
-                    "rating": 5,
-                    "comment": "Alice was amazing! Very helpful and punctual.",
-                    "date": "2026-01-14T10:00:00.000Z"
-                },
-                {
-                    "id": "r2",
-                    "author": "John Doe",
-                    "rating": 4,
-                    "comment": "Great work ethic.",
-                    "date": "2026-01-19T10:00:00.000Z"
-                }
-            ],
-            "registeredEvents": []
+          "id": "r1",
+          "author": "Community Center",
+          "rating": 5,
+          "comment": "Alice was amazing! Very helpful and punctual.",
+          "date": "2026-01-14T10:00:00.000Z"
         },
         {
-            "id": "2",
-            "name": "Bob Smith",
-            "email": "bob@example.com",
-            "phone": "987-654-3210",
-            "skills": [
-                "Driving",
-                "Logistics"
-            ],
-            "availability": "Weekdays",
-            "status": "PENDING",
-            "joinedDate": "2026-01-24T10:00:00.000Z"
+          "id": "r2",
+          "author": "John Doe",
+          "rating": 4,
+          "comment": "Great work ethic.",
+          "date": "2026-01-19T10:00:00.000Z"
         }
-    ],
-    "events": [
-        {
-            "id": "EP-2026-001",
-            "title": "India Fundraising Conference 2026",
-            "description": "A gathering for social sector leaders to discuss sustainable funding strategies.",
-            "date": "2026-02-05",
-            "location": "Varanasi",
-            "status": "UPCOMING"
-        },
-        {
-            "id": "EP-2026-002",
-            "title": "Rural Literacy Drive",
-            "description": "Distributing educational kits and conducting baseline literacy assessments in 5 villages.",
-            "date": "2026-03-15",
-            "location": "Prayagraj",
-            "status": "UPCOMING"
-        },
-        {
-            "id": "EP-2026-003",
-            "title": "Fundraising.AI Global Summit",
-            "description": "Exploring ethical AI implementations for non-profit fundraising and data management.",
-            "date": "2026-10-01",
-            "location": "Virtual",
-            "status": "UPCOMING"
-        },
-        {
-            "id": "EP-2026-004",
-            "title": "NGO Tech Hackathon",
-            "description": "24-hour sprint to build open-source tools for local NGOs.",
-            "date": "2026-05-20",
-            "location": "IIIT Allahabad",
-            "status": "UPCOMING"
-        }
-    ],
-    "donations": [
-        {
-            "id": "1",
-            "donorName": "John Doe",
-            "donorEmail": "john@example.com",
-            "amount": 5000,
-            "date": "2026-01-24T10:00:00.000Z",
-            "receiptId": "RCPT-1001"
-        },
-        {
-            "id": "2",
-            "donorName": "Jane Smith",
-            "donorEmail": "jane@example.com",
-            "amount": 2500,
-            "date": "2026-01-23T10:00:00.000Z",
-            "receiptId": "RCPT-1002"
-        }
-    ],
-    "announcements": [
-        {
-            "id": "1",
-            "title": "Winter Donation Drive Started",
-            "content": "We are now accepting warm clothes and blankets for the winter drive.",
-            "date": "2026-01-24T10:00:00.000Z",
-            "author": "Admin"
-        }
-    ],
-    "auditLogs": []
+      ],
+      "registeredEvents": []
+    },
+    {
+      "id": "2",
+      "name": "Bob Smith",
+      "email": "bob@example.com",
+      "phone": "987-654-3210",
+      "skills": [
+        "Driving",
+        "Logistics"
+      ],
+      "availability": "Weekdays",
+      "status": "PENDING",
+      "joinedDate": "2026-01-24T10:00:00.000Z"
+    },
+    {
+      "id": "keou3g",
+      "name": "aarav singh",
+      "email": "sg.lakshmish.07@gmail.com",
+      "phone": "99999999",
+      "skills": [
+        "Driving"
+      ],
+      "availability": "Weekends",
+      "status": "APPROVED",
+      "password": "123",
+      "joinedDate": "2026-01-24T14:14:28.748Z"
+    },
+    {
+      "id": "uf73e",
+      "name": "monster",
+      "email": "cir.course@gmail.com",
+      "phone": "99999999",
+      "skills": [
+        "ml"
+      ],
+      "availability": "Weekends",
+      "status": "APPROVED",
+      "password": "123",
+      "joinedDate": "2026-01-24T14:49:32.285Z"
+    }
+  ],
+  "events": [
+    {
+      "id": "EP-2026-001",
+      "title": "India Fundraising Conference 2026",
+      "description": "A gathering for social sector leaders to discuss sustainable funding strategies.",
+      "date": "2026-02-05",
+      "location": "Varanasi",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "EP-2026-002",
+      "title": "Rural Literacy Drive",
+      "description": "Distributing educational kits and conducting baseline literacy assessments in 5 villages.",
+      "date": "2026-03-15",
+      "location": "Prayagraj",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "EP-2026-003",
+      "title": "Fundraising.AI Global Summit",
+      "description": "Exploring ethical AI implementations for non-profit fundraising and data management.",
+      "date": "2026-10-01",
+      "location": "Virtual",
+      "status": "UPCOMING"
+    },
+    {
+      "id": "EP-2026-004",
+      "title": "NGO Tech Hackathon",
+      "description": "24-hour sprint to build open-source tools for local NGOs.",
+      "date": "2026-05-20",
+      "location": "IIIT Allahabad",
+      "status": "UPCOMING"
+    }
+  ],
+  "donations": [
+    {
+      "id": "1",
+      "donorName": "John Doe",
+      "donorEmail": "john@example.com",
+      "amount": 5000,
+      "date": "2026-01-24T10:00:00.000Z",
+      "receiptId": "RCPT-1001"
+    },
+    {
+      "id": "2",
+      "donorName": "Jane Smith",
+      "donorEmail": "jane@example.com",
+      "amount": 2500,
+      "date": "2026-01-23T10:00:00.000Z",
+      "receiptId": "RCPT-1002"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "1",
+      "title": "Winter Donation Drive Started",
+      "content": "We are now accepting warm clothes and blankets for the winter drive.",
+      "date": "2026-01-24T10:00:00.000Z",
+      "author": "Admin"
+    }
+  ],
+  "auditLogs": [
+    {
+      "id": "z7qfzt",
+      "action": "VOLUNTEER_STATUS_UPDATE",
+      "details": "Volunteer uf73e status updated to APPROVED",
+      "adminId": "ADMIN",
+      "timestamp": "2026-01-24T14:50:06.755Z"
+    },
+    {
+      "id": "mr302",
+      "action": "VOLUNTEER_APPLICATION",
+      "details": "New application from monster",
+      "adminId": "SYSTEM",
+      "timestamp": "2026-01-24T14:49:32.287Z"
+    },
+    {
+      "id": "mdvcd",
+      "action": "VOLUNTEER_STATUS_UPDATE",
+      "details": "Volunteer keou3g status updated to APPROVED",
+      "adminId": "ADMIN",
+      "timestamp": "2026-01-24T14:14:51.251Z"
+    },
+    {
+      "id": "jwtty7",
+      "action": "VOLUNTEER_APPLICATION",
+      "details": "New application from aarav singh",
+      "adminId": "SYSTEM",
+      "timestamp": "2026-01-24T14:14:28.751Z"
+    }
+  ]
 }
