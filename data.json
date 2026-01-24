@@ -1,243 +1,111 @@
 {
-  "volunteers": [
-    {
-      "id": "1",
-      "name": "Alice Johnson",
-      "email": "alice@example.com",
-      "phone": "123-456-7890",
-      "skills": [
-        "Teaching",
-        "First Aid"
-      ],
-      "availability": "Weekends",
-      "status": "APPROVED",
-      "joinedDate": "2026-01-24T00:47:06.845Z"
-    },
-    {
-      "id": "2",
-      "name": "Bob Smith",
-      "email": "bob@example.com",
-      "phone": "987-654-3210",
-      "skills": [
-        "Driving",
-        "Logistics"
-      ],
-      "availability": "Weekdays",
-      "status": "REJECTED",
-      "joinedDate": "2026-01-24T00:47:06.845Z"
-    },
-    {
-      "id": "test-1",
-      "name": "Test Volunteer",
-      "email": "test@example.com",
-      "phone": "1234567890",
-      "skills": [
-        "Debugging"
-      ],
-      "availability": "Weekends",
-      "status": "APPROVED",
-      "joinedDate": "2026-01-24T00:47:53.673Z"
-    },
-    {
-      "id": "auth-user-1",
-      "name": "Auth User",
-      "email": "auth@test.com",
-      "phone": "1234567890",
-      "skills": [
-        "Testing"
-      ],
-      "availability": "Weekends",
-      "status": "APPROVED",
-      "password": "securepassword",
-      "joinedDate": "2026-01-24T00:54:43.336Z"
-    },
-    {
-      "id": "han0pn",
-      "name": "aarav singh",
-      "email": "sg.lakshmish.07@gmail.com",
-      "phone": "9999999999",
-      "skills": [
-        "asjdfio"
-      ],
-      "availability": "Weekends",
-      "status": "APPROVED",
-      "password": "12345",
-      "joinedDate": "2026-01-24T00:59:35.046Z",
-      "avatarUrl": "https://static.wikitide.net/deathbattlewiki/6/63/Portrait.roronoazoro.png",
-      "registeredEvents": [
-        "1",
-        "74h4gk"
-      ]
-    },
-    {
-      "id": "jv0rf",
-      "name": "aarav singh",
-      "email": "aaravsingh0707@gmail.com",
-      "phone": "9999999999",
-      "skills": [
-        "Driving"
-      ],
-      "availability": "Weekends",
-      "status": "APPROVED",
-      "password": "12345",
-      "joinedDate": "2026-01-24T01:21:59.440Z",
-      "avatarUrl": "https://static.wikitide.net/deathbattlewiki/6/63/Portrait.roronoazoro.png"
-    },
-    {
-      "id": "58k4gd",
-      "name": "aaaggg",
-      "email": "ahwan@gmail",
-      "phone": "9999999999",
-      "skills": [
-        "op"
-      ],
-      "availability": "Weekends",
-      "status": "APPROVED",
-      "password": "123",
-      "joinedDate": "2026-01-24T01:43:55.471Z",
-      "avatarUrl": "https://static.wikitide.net/deathbattlewiki/6/63/Portrait.roronoazoro.png",
-      "registeredEvents": [
-        "1"
-      ]
-    }
-  ],
-  "events": [
-    {
-      "id": "1",
-      "title": "Community Clean-up Drive",
-      "description": "Join us to clean up the local park and plant new trees.",
-      "date": "2026-01-31T00:47:06.845Z",
-      "location": "Central Park",
-      "status": "UPCOMING"
-    },
-    {
-      "id": "2",
-      "title": "Food Distribution Camp",
-      "description": "Distributing food packets to underprivileged families.",
-      "date": "2026-01-22T00:47:06.845Z",
-      "location": "Community Center",
-      "status": "COMPLETED"
-    },
-    {
-      "id": "74h4gk",
-      "title": "flood donation",
-      "description": "people are very poor",
-      "date": "2026-01-29T00:00:00.000Z",
-      "location": "ghaziabad",
-      "status": "UPCOMING"
-    }
-  ],
-  "donations": [
-    {
-      "id": "1",
-      "donorName": "John Doe",
-      "donorEmail": "john@example.com",
-      "amount": 5000,
-      "date": "2026-01-24T00:47:06.845Z",
-      "receiptId": "RCPT-1001"
-    },
-    {
-      "id": "2",
-      "donorName": "Jane Smith",
-      "donorEmail": "jane@example.com",
-      "amount": 2500,
-      "date": "2026-01-23T00:47:06.845Z",
-      "receiptId": "RCPT-1002"
-    }
-  ],
-  "announcements": [
-    {
-      "id": "1",
-      "title": "Winter Donation Drive Started",
-      "content": "We are now accepting warm clothes and blankets for the winter drive.",
-      "date": "2026-01-24T00:47:06.845Z",
-      "author": "Admin"
-    },
-    {
-      "id": "9yedckw",
-      "title": "ahwan is sicl",
-      "content": "mkaaaa",
-      "date": "2026-01-24T01:47:15.002Z",
-      "author": "Admin"
-    }
-  ],
-  "auditLogs": [
-    {
-      "id": "czzeu8",
-      "action": "ANNOUNCEMENT_CREATED",
-      "details": "New announcement: ahwan is sicl",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T01:47:15.006Z"
-    },
-    {
-      "id": "pgg01j",
-      "action": "VOLUNTEER_STATUS_UPDATE",
-      "details": "Volunteer 58k4gd status updated to APPROVED",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T01:44:27.132Z"
-    },
-    {
-      "id": "2acx4t",
-      "action": "VOLUNTEER_APPLICATION",
-      "details": "New application from aaaggg",
-      "adminId": "SYSTEM",
-      "timestamp": "2026-01-24T01:43:55.475Z"
-    },
-    {
-      "id": "8ee6pv",
-      "action": "EVENT_CREATED",
-      "details": "New event created: flood donation",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T01:39:41.332Z"
-    },
-    {
-      "id": "0pyu6q",
-      "action": "VOLUNTEER_STATUS_UPDATE",
-      "details": "Volunteer 2 status updated to REJECTED",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T01:22:19.318Z"
-    },
-    {
-      "id": "3bstf",
-      "action": "VOLUNTEER_STATUS_UPDATE",
-      "details": "Volunteer jv0rf status updated to APPROVED",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T01:22:16.906Z"
-    },
-    {
-      "id": "9ou2oi",
-      "action": "VOLUNTEER_APPLICATION",
-      "details": "New application from Aarav Singh",
-      "adminId": "SYSTEM",
-      "timestamp": "2026-01-24T01:21:59.442Z"
-    },
-    {
-      "id": "j0zdl",
-      "action": "VOLUNTEER_STATUS_UPDATE",
-      "details": "Volunteer han0pn status updated to APPROVED",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T00:59:59.593Z"
-    },
-    {
-      "id": "n5ugkt",
-      "action": "VOLUNTEER_APPLICATION",
-      "details": "New application from aarav singh",
-      "adminId": "SYSTEM",
-      "timestamp": "2026-01-24T00:59:35.048Z"
-    },
-    {
-      "id": "q8wwm",
-      "action": "VOLUNTEER_STATUS_UPDATE",
-      "details": "Volunteer zoypjo status updated to APPROVED",
-      "adminId": "ADMIN",
-      "timestamp": "2026-01-24T00:50:59.291Z"
-    },
-    {
-      "id": "w64n5e",
-      "action": "VOLUNTEER_APPLICATION",
-      "details": "New application from laksh",
-      "adminId": "SYSTEM",
-      "timestamp": "2026-01-24T00:50:20.934Z"
-    }
-  ]
+    "volunteers": [
+        {
+            "id": "1",
+            "name": "Alice Johnson",
+            "email": "alice@example.com",
+            "phone": "123-456-7890",
+            "skills": [
+                "Teaching",
+                "First Aid"
+            ],
+            "availability": "Weekends",
+            "status": "APPROVED",
+            "password": "password123",
+            "joinedDate": "2026-01-24T10:00:00.000Z",
+            "rating": 4.5,
+            "reviews": [
+                {
+                    "id": "r1",
+                    "author": "Community Center",
+                    "rating": 5,
+                    "comment": "Alice was amazing! Very helpful and punctual.",
+                    "date": "2026-01-14T10:00:00.000Z"
+                },
+                {
+                    "id": "r2",
+                    "author": "John Doe",
+                    "rating": 4,
+                    "comment": "Great work ethic.",
+                    "date": "2026-01-19T10:00:00.000Z"
+                }
+            ],
+            "registeredEvents": []
+        },
+        {
+            "id": "2",
+            "name": "Bob Smith",
+            "email": "bob@example.com",
+            "phone": "987-654-3210",
+            "skills": [
+                "Driving",
+                "Logistics"
+            ],
+            "availability": "Weekdays",
+            "status": "PENDING",
+            "joinedDate": "2026-01-24T10:00:00.000Z"
+        }
+    ],
+    "events": [
+        {
+            "id": "EP-2026-001",
+            "title": "India Fundraising Conference 2026",
+            "description": "A gathering for social sector leaders to discuss sustainable funding strategies.",
+            "date": "2026-02-05",
+            "location": "Varanasi",
+            "status": "UPCOMING"
+        },
+        {
+            "id": "EP-2026-002",
+            "title": "Rural Literacy Drive",
+            "description": "Distributing educational kits and conducting baseline literacy assessments in 5 villages.",
+            "date": "2026-03-15",
+            "location": "Prayagraj",
+            "status": "UPCOMING"
+        },
+        {
+            "id": "EP-2026-003",
+            "title": "Fundraising.AI Global Summit",
+            "description": "Exploring ethical AI implementations for non-profit fundraising and data management.",
+            "date": "2026-10-01",
+            "location": "Virtual",
+            "status": "UPCOMING"
+        },
+        {
+            "id": "EP-2026-004",
+            "title": "NGO Tech Hackathon",
+            "description": "24-hour sprint to build open-source tools for local NGOs.",
+            "date": "2026-05-20",
+            "location": "IIIT Allahabad",
+            "status": "UPCOMING"
+        }
+    ],
+    "donations": [
+        {
+            "id": "1",
+            "donorName": "John Doe",
+            "donorEmail": "john@example.com",
+            "amount": 5000,
+            "date": "2026-01-24T10:00:00.000Z",
+            "receiptId": "RCPT-1001"
+        },
+        {
+            "id": "2",
+            "donorName": "Jane Smith",
+            "donorEmail": "jane@example.com",
+            "amount": 2500,
+            "date": "2026-01-23T10:00:00.000Z",
+            "receiptId": "RCPT-1002"
+        }
+    ],
+    "announcements": [
+        {
+            "id": "1",
+            "title": "Winter Donation Drive Started",
+            "content": "We are now accepting warm clothes and blankets for the winter drive.",
+            "date": "2026-01-24T10:00:00.000Z",
+            "author": "Admin"
+        }
+    ],
+    "auditLogs": []
 }

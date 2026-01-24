@@ -21,7 +21,7 @@ export default async function RootLayout({
   const user = await getUserSession();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={cn(inter.className, "min-h-screen flex flex-col")}>
         <Navbar user={user} />
         <main className="flex-1">
