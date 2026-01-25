@@ -60,6 +60,11 @@ export default async function LiveEventPage({ params }: { params: Promise<{ id: 
                     <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                         <Share2 className="w-5 h-5" />
                     </Button>
+                    <Link href={`/donate?eventId=${id}`} className="ml-2">
+                        <Button className="bg-red-500 hover:bg-red-600 text-white border-0">
+                            Donate
+                        </Button>
+                    </Link>
                 </div>
             </div>
 
