@@ -14,6 +14,7 @@ export interface Volunteer {
     rating?: number;
     joinedDate: string;
     registeredEvents?: string[]; // IDs of events
+    points?: number; // Leaderboard points
 }
 
 export interface Review {
@@ -24,13 +25,36 @@ export interface Review {
     date: string;
 }
 
+export interface EventMetrics {
+    peopleFed?: number;
+    costBurnt?: number;
+    partners?: string[];
+}
+
+export interface EventFundraising {
+    goal: number;
+    raised: number;
+}
+
 export interface Event {
     id: string;
     title: string;
     description: string;
     date: string;
     location: string;
-    status: 'UPCOMING' | 'COMPLETED' | 'CANCELLED';
+    status: 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+    metrics?: EventMetrics;
+    fundraising?: EventFundraising;
+}
+
+export interface EventUpdate {
+    id: string;
+    eventId: string;
+    content: string;
+    authorId: string;
+    authorName: string;
+    timestamp: string;
+    imageUrl?: string;
 }
 
 export interface Donation {
@@ -63,4 +87,12 @@ export interface Admin {
     id: string;
     username: string;
     role: 'SUPER_ADMIN' | 'EDITOR';
+}
+
+export interface Staff {
+    id: string;
+    username: string;
+    password?: string;
+    role: 'SUPER_ADMIN' | 'STAFF';
+    permissions: string[]; // 'VIEW_AUDITS', 'APPROVE_USERS'
 }

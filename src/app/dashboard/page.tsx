@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Star, Clock, Bell, Calendar, MapPin } from "lucide-react";
 import { PasswordResetForm } from "./password-form";
 import { ProfileEditDialog } from "./profile-edit";
+import { Leaderboard } from "@/components/volunteer/leaderboard";
 
 export default async function DashboardPage() {
     // Server-side call to get user session
@@ -79,6 +80,8 @@ export default async function DashboardPage() {
                             </CardContent>
                         </Card>
                     )}
+
+                    <Leaderboard />
 
                     {/* Upcoming Events Section */}
                     <Card>

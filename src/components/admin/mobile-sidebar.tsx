@@ -1,23 +1,37 @@
-import Link from "next/link";
-import { BarChart3, Calendar, FileText, Heart, LayoutDashboard, Megaphone, ShieldCheck, Users } from "lucide-react";
-import { MobileSidebar } from "@/components/admin/mobile-sidebar";
+'use client';
 
-export default function AdminLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { BarChart3, Calendar, FileText, Heart, LayoutDashboard, Megaphone, ShieldCheck, Users } from "lucide-react";
+
+export function MobileSidebar() {
+    const [open, setOpen] = useState(false);
+    const pathname = usePathname();
+
+    // Close sidebar on route change
+    useEffect(() => {
+        setOpen(false);
+    }, [pathname]);
+
     return (
-        <div className="flex min-h-screen bg-slate-100">
-            {/* Sidebar */}
-            <aside className="w-64 bg-white border-r hidden md:flex flex-col fixed h-full">
+        <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-6 w-6" />
+                    <span className="sr-only">Toggle menu</span>
+                </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-64">
                 <div className="p-6 border-b">
                     <Link href="/admin/dashboard" className="flex items-center space-x-2">
                         <ShieldCheck className="h-6 w-6 text-primary" />
                         <span className="text-xl font-bold">Admin Panel</span>
                     </Link>
                 </div>
-
                 <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                     <Link href="/admin/dashboard" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-slate-100 text-slate-700">
                         <LayoutDashboard className="h-5 w-5" />
@@ -43,37 +57,17 @@ export default function AdminLayout({
                         <FileText className="h-5 w-5" />
                         Audit Logs
                     </Link>
-
-                    {/* Only visible to Super Admin - checking client side is tricky without context, 
-                        but we can render it and let the page redirect if unauthorized. 
-                        Ideally we pass session prop to layout or use a server component check here. 
-                        Since this is a layout, we can fetch session. */}
                     <Link href="/admin/staff" className="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md hover:bg-slate-100 text-slate-700">
                         <ShieldCheck className="h-5 w-5" />
                         Staff Management
                     </Link>
                 </nav>
-
                 <div className="p-4 border-t">
                     <Link href="/" className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-muted-foreground hover:text-primary">
                         View Public Site
                     </Link>
                 </div>
-            </aside>
-
-            {/* Main Content */}
-            <main className="flex-1 md:ml-64">
-                <div className="md:hidden p-4 border-b bg-white flex items-center justify-between sticky top-0 z-10">
-                    <Link href="/admin/dashboard" className="flex items-center space-x-2">
-                        <ShieldCheck className="h-6 w-6 text-primary" />
-                        <span className="text-xl font-bold">Admin Panel</span>
-                    </Link>
-                    <MobileSidebar />
-                </div>
-                <div className="p-8">
-                    {children}
-                </div>
-            </main>
-        </div>
+            </SheetContent>
+        </Sheet>
     );
 }

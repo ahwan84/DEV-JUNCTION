@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, User, ArrowRight, Heart } from "lucide-react";
 import Link from "next/link";
-import { loginUser } from "@/app/actions";
+import { loginUser, loginStaff } from "@/app/actions";
 import { Captcha } from "@/components/ui/captcha";
 
 export default function LoginPage() {
@@ -29,15 +29,21 @@ export default function LoginPage() {
         setError('');
 
         if (role === 'admin') {
-            // Admin login logic (keep existing mock for now, or update if user wants)
-            // Implementation plan didn't specify changing admin login, so kept as mock to avoid regression
-            // unless admin is also in storage? The types imply specific admin interface.
-            // For MVP, keep simple check.
-            if (email === 'admin' && password === 'admin') {
-                document.cookie = "admin_session=true; path=/";
-                router.push('/admin/dashboard');
-            } else {
-                setError('Invalid admin credentials');
+            // Admin login logic
+            const formData = new FormData();
+            formData.append('username', email); // Reusing email state for username
+            formData.append('password', password);
+
+            try {
+                const result = await loginStaff(formData);
+                if (result.success) {
+                    router.push('/admin/dashboard');
+                } else {
+                    setError(result.error || 'Invalid admin credentials');
+                    setIsLoading(false);
+                }
+            } catch (err) {
+                setError('An unexpected error occurred');
                 setIsLoading(false);
             }
         } else {

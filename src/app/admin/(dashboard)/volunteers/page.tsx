@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { updateVolunteerStatus } from "@/app/actions";
+import { updateVolunteerStatus, getStaffSession } from "@/app/actions";
 import { storage } from "@/lib/storage";
 import { Check, X } from "lucide-react";
 
-export default function VolunteersPage() {
-    const volunteers = storage.getVolunteers();
+export default async function VolunteersPage() {
+    const session = await getStaffSession();
+    const canApprove = session?.role === 'SUPER_ADMIN' || session?.permissions?.includes('APPROVE_USERS');
+
+    const volunteers = await storage.getVolunteers();
 
     return (
         <div className="space-y-6">
@@ -46,14 +49,14 @@ export default function VolunteersPage() {
                                 <td className="px-6 py-4">{volunteer.availability}</td>
                                 <td className="px-6 py-4">
                                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${volunteer.status === 'APPROVED' ? 'bg-green-100 text-green-700' :
-                                            volunteer.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
-                                                'bg-yellow-100 text-yellow-700'
+                                        volunteer.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                                            'bg-yellow-100 text-yellow-700'
                                         }`}>
                                         {volunteer.status}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    {volunteer.status === 'PENDING' && (
+                                    {volunteer.status === 'PENDING' && canApprove && (
                                         <div className="flex justify-end gap-2">
                                             <form action={async () => {
                                                 'use server';
@@ -72,6 +75,9 @@ export default function VolunteersPage() {
                                                 </Button>
                                             </form>
                                         </div>
+                                    )}
+                                    {volunteer.status === 'PENDING' && !canApprove && (
+                                        <span className="text-xs text-muted-foreground italic">Read Only</span>
                                     )}
                                 </td>
                             </tr>

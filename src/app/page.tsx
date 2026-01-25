@@ -3,9 +3,11 @@ import { storage } from "@/lib/storage";
 import Link from "next/link";
 import { ArrowRight, Calendar, Heart, Users, ChevronRight } from "lucide-react";
 
-export default function Home() {
-  const events = storage.getEvents().slice(0, 3);
-  const announcements = storage.getAnnouncements().slice(0, 2);
+export default async function Home() {
+  const allEvents = await storage.getEvents();
+  const events = allEvents.slice(0, 3);
+  const allAnnouncements = await storage.getAnnouncements();
+  const announcements = allAnnouncements.slice(0, 2);
 
   return (
     <div className="flex flex-col min-h-screen">

@@ -2,8 +2,8 @@ import { storage } from "@/lib/storage";
 import { Download, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function DonationsPage() {
-    const donations = storage.getDonations();
+export default async function DonationsPage() {
+    const donations = await storage.getDonations();
     const totalRaised = donations.reduce((acc, curr) => acc + curr.amount, 0);
 
     return (

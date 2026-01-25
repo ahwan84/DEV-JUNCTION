@@ -1,9 +1,10 @@
 'use server';
 
 import { storage } from "@/lib/storage";
-import { Volunteer, Event, Announcement } from "@/types";
+import { Volunteer, Event, Announcement, EventUpdate, Staff, EventMetrics } from "@/types";
 import { revalidatePath } from "next/cache";
 import { cookies } from 'next/headers';
+import Razorpay from 'razorpay';
 
 // Volunteer Actions
 export async function submitVolunteerApplication(formData: FormData) {
@@ -14,12 +15,9 @@ export async function submitVolunteerApplication(formData: FormData) {
     const availability = formData.get('availability') as string;
     const password = formData.get('password') as string; // Capture password
 
-    const existingUser = storage.getVolunteers().find(v => v.email === email);
+    const volunteers = await storage.getVolunteers();
+    const existingUser = volunteers.find(v => v.email === email);
     if (existingUser) {
-        // ideally return error, but server action return type needs to change or handle it client side
-        // For MVP, if we return {success: false, error: ...}, the client needs to show it.
-        // The current client expects void or throws?
-        // Let's check client code.
         return { success: false, error: 'Email already registered' };
     }
 
@@ -35,9 +33,9 @@ export async function submitVolunteerApplication(formData: FormData) {
         joinedDate: new Date().toISOString(),
     };
 
-    storage.addVolunteer(newVolunteer);
+    await storage.addVolunteer(newVolunteer);
 
-    storage.addAuditLog({
+    await storage.addAuditLog({
         id: Math.random().toString(36).substring(7),
         action: 'VOLUNTEER_APPLICATION',
         details: `New application from ${name}`,
@@ -53,7 +51,7 @@ export async function loginUser(formData: FormData) {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    const volunteers = storage.getVolunteers();
+    const volunteers = await storage.getVolunteers();
     const user = volunteers.find(v => v.email === email);
 
     if (!user) {
@@ -79,7 +77,7 @@ export async function getUserSession() {
     if (!sessionCookie) return null;
 
     const email = sessionCookie.value;
-    const volunteers = storage.getVolunteers();
+    const volunteers = await storage.getVolunteers();
     const user = volunteers.find(v => v.email === email);
 
     // For safety, don't return password
@@ -102,7 +100,7 @@ export async function updateUserProfile(formData: FormData) {
     const name = formData.get('name') as string;
     const avatarUrl = formData.get('avatarUrl') as string;
 
-    storage.updateVolunteer(user.id, { name, avatarUrl });
+    await storage.updateVolunteer(user.id, { name, avatarUrl });
 
     revalidatePath('/');
     return { success: true };
@@ -124,15 +122,15 @@ export async function updatePassword(formData: FormData) {
     }
 
     // In a real app, hash this!
-    storage.updateVolunteer(user.id, { password });
+    await storage.updateVolunteer(user.id, { password });
 
     return { success: true };
 }
 
 export async function updateVolunteerStatus(id: string, status: 'APPROVED' | 'REJECTED') {
-    storage.updateVolunteer(id, { status });
+    await storage.updateVolunteer(id, { status });
 
-    storage.addAuditLog({
+    await storage.addAuditLog({
         id: Math.random().toString(36).substring(7),
         action: 'VOLUNTEER_STATUS_UPDATE',
         details: `Volunteer ${id} status updated to ${status}`,
@@ -160,9 +158,9 @@ export async function createEvent(formData: FormData) {
         status: 'UPCOMING',
     };
 
-    storage.addEvent(newEvent);
+    await storage.addEvent(newEvent);
 
-    storage.addAuditLog({
+    await storage.addAuditLog({
         id: Math.random().toString(36).substring(7),
         action: 'EVENT_CREATED',
         details: `New event created: ${title}`,
@@ -170,9 +168,101 @@ export async function createEvent(formData: FormData) {
         timestamp: new Date().toISOString(),
     });
 
+
     revalidatePath('/admin/events');
     revalidatePath('/programs');
     revalidatePath('/');
+}
+
+export async function startEvent(eventId: string) {
+    await storage.updateEventStatus(eventId, 'IN_PROGRESS');
+    revalidatePath(`/programs/${eventId}/live`);
+    revalidatePath('/programs');
+    revalidatePath('/admin/events');
+}
+
+export async function endEvent(eventId: string) {
+    await storage.updateEventStatus(eventId, 'COMPLETED');
+    revalidatePath(`/programs/${eventId}/live`);
+    revalidatePath('/programs');
+    revalidatePath('/admin/events');
+}
+
+export async function postEventUpdate(eventId: string, formData: FormData) {
+    const user = await getUserSession();
+    if (!user) return { success: false, error: 'Not authenticated' };
+
+    const content = formData.get('content') as string;
+    // In a real app, handle image upload to S3/Blob storage here.
+    // For MVP, we'll support external URLs or just ignore image if file is uploaded
+    // or assume the user pastes a URL in a text field if that matches requirement.
+    // Let's assume content is text for now, maybe add imageUrl later or via a simple URL input.
+    // Wait, the prompt implies "one can start updating progress". Text + Image is best.
+    // Let's check if the user uploaded an image. Simulating file upload is hard without cloud storage.
+    // I will look for 'imageUrl' in formData (client can mock upload or provide URL).
+    const imageUrl = formData.get('imageUrl') as string;
+
+    const newUpdate: EventUpdate = {
+        id: Math.random().toString(36).substring(7),
+        eventId,
+        content,
+        authorId: user.id,
+        authorName: user.name,
+        timestamp: new Date().toISOString(),
+        imageUrl: imageUrl || undefined
+    };
+
+    await storage.addEventUpdate(newUpdate);
+
+    // Create audit log for updates? Maybe overkill, but good for tracking.
+    // Skipping to keep noise down.
+
+    revalidatePath(`/programs/${eventId}/live`);
+
+    revalidatePath(`/admin/events/${eventId}/live`);
+    return { success: true };
+}
+
+export async function updateEventMetrics(eventId: string, formData: FormData) {
+    const user = await getUserSession();
+    if (!user) return { success: false, error: 'Not authenticated' };
+
+    // Parse metrics
+    const metrics: EventMetrics = {
+        peopleFed: Number(formData.get('peopleFed')) || 0,
+        costBurnt: Number(formData.get('costBurnt')) || 0,
+        partners: (formData.get('partners') as string || "").split(',').map(s => s.trim()).filter(Boolean)
+    };
+
+    await storage.updateEventMetrics(eventId, metrics);
+
+    revalidatePath(`/programs/${eventId}/live`);
+    revalidatePath(`/admin/events/${eventId}/live`);
+    return { success: true };
+}
+
+export async function donateToEvent(eventId: string, amount: number) {
+    const events = await storage.getEvents();
+    const event = events.find(e => e.id === eventId);
+    if (!event) return { success: false, error: 'Event not found' };
+
+    const currentFundraising = event.fundraising || { goal: 5000, raised: 0 };
+    const newFundraising = {
+        ...currentFundraising,
+        raised: currentFundraising.raised + amount
+    };
+
+    await storage.updateEventFundraising(eventId, newFundraising);
+
+    // Also log donation... (skipped for brevity)
+
+    revalidatePath('/programs');
+    revalidatePath(`/programs/${eventId}/live`);
+    return { success: true };
+}
+
+export async function getEventFeed(eventId: string) {
+    return await storage.getEventUpdates(eventId);
 }
 
 // Announcement Actions
@@ -188,9 +278,9 @@ export async function createAnnouncement(formData: FormData) {
         author: 'Admin',
     };
 
-    storage.addAnnouncement(newAnnouncement);
+    await storage.addAnnouncement(newAnnouncement);
 
-    storage.addAuditLog({
+    await storage.addAuditLog({
         id: Math.random().toString(36).substring(7),
         action: 'ANNOUNCEMENT_CREATED',
         details: `New announcement: ${title}`,
@@ -203,14 +293,15 @@ export async function createAnnouncement(formData: FormData) {
 }
 
 export async function getAnnouncements() {
-    return storage.getAnnouncements().sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const announcements = await storage.getAnnouncements();
+    return announcements.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function registerForEvent(eventId: string) {
     const user = await getUserSession();
     if (!user) return { success: false, error: 'Not authenticated' };
 
-    const volunteers = storage.getVolunteers();
+    const volunteers = await storage.getVolunteers();
     const volunteer = volunteers.find(v => v.id === user.id);
 
     if (volunteer) {
@@ -219,7 +310,7 @@ export async function registerForEvent(eventId: string) {
             return { success: false, error: 'Already registered' };
         }
 
-        storage.updateVolunteer(user.id, {
+        await storage.updateVolunteer(user.id, {
             registeredEvents: [...registered, eventId]
         });
 
@@ -234,18 +325,16 @@ export async function getRegisteredEvents() {
     const user = await getUserSession();
     if (!user) return [];
 
-    const volunteers = storage.getVolunteers();
+    const volunteers = await storage.getVolunteers();
     const volunteer = volunteers.find(v => v.id === user.id);
 
     if (!volunteer || !volunteer.registeredEvents) return [];
 
-    const allEvents = storage.getEvents();
+    const allEvents = await storage.getEvents();
     return allEvents.filter(e => volunteer.registeredEvents?.includes(e.id));
 }
 
 // --- Razorpay & Email ---
-
-import Razorpay from 'razorpay';
 
 export async function createRazorpayOrder(amount: number) {
     try {
@@ -306,4 +395,79 @@ export async function sendThankYouEmail(email: string, name: string, amount: num
     // Simulate delay
     await new Promise(resolve => setTimeout(resolve, 500));
     return { success: true };
+}
+
+// --- Staff Management ---
+
+export async function loginStaff(formData: FormData) {
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+
+    // 1. Check hardcoded admin (Bootstrapping)
+    if (username === 'admin' && password === 'admin') {
+        (await cookies()).set('admin_session', JSON.stringify({
+            username: 'admin',
+            role: 'SUPER_ADMIN',
+            permissions: ['ALL']
+        }), { path: '/' });
+        return { success: true };
+    }
+
+    // 2. Check database staff
+    const staff = await storage.getStaffByUsername(username);
+    if (staff && staff.password === password) {
+        (await cookies()).set('admin_session', JSON.stringify({
+            username: staff.username,
+            role: staff.role,
+            permissions: staff.permissions
+        }), { path: '/' });
+        return { success: true };
+    }
+
+    return { success: false, error: 'Invalid credentials' };
+}
+
+export async function createStaff(formData: FormData) {
+    const session = await getStaffSession();
+    if (!session || session.role !== 'SUPER_ADMIN') {
+        return { success: false, error: 'Unauthorized' };
+    }
+
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
+    // permissions is a comma-separated string from the form
+    const permissions = (formData.get('permissions') as string || '').split(',').filter(Boolean);
+
+    const existing = await storage.getStaffByUsername(username);
+    if (existing) {
+        return { success: false, error: 'Username already exists' };
+    }
+
+    const newStaff: Staff = {
+        id: Math.random().toString(36).substring(7),
+        username,
+        password,
+        role: 'STAFF',
+        permissions
+    };
+
+    await storage.addStaff(newStaff);
+    revalidatePath('/admin/staff');
+    return { success: true };
+}
+
+export async function getStaffSession() {
+    const cookie = (await cookies()).get('admin_session');
+    if (!cookie) return null;
+    try {
+        return JSON.parse(cookie.value);
+    } catch (e) {
+        return null;
+    }
+}
+
+export async function logoutStaff() {
+    (await cookies()).delete('admin_session');
+    revalidatePath('/admin/login');
+    revalidatePath('/');
 }

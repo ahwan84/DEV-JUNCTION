@@ -1,8 +1,8 @@
 import { storage } from "@/lib/storage";
 import { CheckCircle, DollarSign, TrendingUp, ShieldCheck, Users, Heart } from "lucide-react";
 
-export default function ImpactPage() {
-    const donations = storage.getDonations();
+export default async function ImpactPage() {
+    const donations = await storage.getDonations();
     const totalRaised = donations.reduce((acc, curr) => acc + curr.amount, 0);
     const utilization = [
         { category: "Education Programs", amount: 15000, percent: 30, color: "bg-blue-500" },

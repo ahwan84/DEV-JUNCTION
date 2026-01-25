@@ -1,216 +1,130 @@
-import { Volunteer, Event, Donation, Announcement, AuditLog } from '@/types';
-import fs from 'fs';
-import path from 'path';
+import { Volunteer, Event, Donation, Announcement, AuditLog, EventUpdate, EventMetrics, EventFundraising } from '@/types';
+import dbConnect from './db';
+import { VolunteerModel, EventModel, DonationModel, AnnouncementModel, AuditLogModel, EventUpdateModel, StaffModel } from './models';
 
-const DATA_FILE_PATH = path.join(process.cwd(), 'data.json');
-
-interface DataSchema {
-    volunteers: Volunteer[];
-    events: Event[];
-    donations: Donation[];
-    announcements: Announcement[];
-    auditLogs: AuditLog[];
-}
-
-class JSONFileStorage {
-    private data: DataSchema;
+class MongoStorage {
 
     constructor() {
-        this.data = this.loadData();
-    }
-
-    private loadData(): DataSchema {
-        if (!fs.existsSync(DATA_FILE_PATH)) {
-            return this.seedData();
-        }
-        try {
-            const fileContent = fs.readFileSync(DATA_FILE_PATH, 'utf-8');
-            return JSON.parse(fileContent);
-        } catch (error) {
-            console.error("Error reading data file:", error);
-            return this.seedData();
-        }
-    }
-
-    private saveData() {
-        try {
-            fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(this.data, null, 2));
-        } catch (error) {
-            console.error("Error writing data file:", error);
-        }
-    }
-
-    private seedData(): DataSchema {
-        const initialData: DataSchema = {
-            volunteers: [
-                {
-                    id: '1',
-                    name: 'Alice Johnson',
-                    email: 'alice@example.com',
-                    phone: '123-456-7890',
-                    skills: ['Teaching', 'First Aid'],
-                    availability: 'Weekends',
-                    status: 'APPROVED',
-                    password: 'password123',
-                    joinedDate: new Date().toISOString(),
-                    rating: 4.5,
-                    reviews: [
-                        {
-                            id: 'r1',
-                            author: 'Community Center',
-                            rating: 5,
-                            comment: 'Alice was amazing! Very helpful and punctual.',
-                            date: new Date(Date.now() - 86400000 * 10).toISOString()
-                        },
-                        {
-                            id: 'r2',
-                            author: 'John Doe',
-                            rating: 4,
-                            comment: 'Great work ethic.',
-                            date: new Date(Date.now() - 86400000 * 5).toISOString()
-                        }
-                    ],
-                    registeredEvents: []
-                },
-                {
-                    id: '2',
-                    name: 'Bob Smith',
-                    email: 'bob@example.com',
-                    phone: '987-654-3210',
-                    skills: ['Driving', 'Logistics'],
-                    availability: 'Weekdays',
-                    status: 'PENDING',
-                    joinedDate: new Date().toISOString(),
-                },
-            ],
-            events: [
-                {
-                    id: '1',
-                    title: 'Community Clean-up Drive',
-                    description: 'Join us to clean up the local park and plant new trees.',
-                    date: new Date(Date.now() + 86400000 * 7).toISOString(),
-                    location: 'Central Park',
-                    status: 'UPCOMING',
-                },
-                {
-                    id: '2',
-                    title: 'Food Distribution Camp',
-                    description: 'Distributing food packets to underprivileged families.',
-                    date: new Date(Date.now() - 86400000 * 2).toISOString(),
-                    location: 'Community Center',
-                    status: 'COMPLETED',
-                },
-            ],
-            donations: [
-                {
-                    id: '1',
-                    donorName: 'John Doe',
-                    donorEmail: 'john@example.com',
-                    amount: 5000,
-                    date: new Date().toISOString(),
-                    receiptId: 'RCPT-1001',
-                },
-                {
-                    id: '2',
-                    donorName: 'Jane Smith',
-                    donorEmail: 'jane@example.com',
-                    amount: 2500,
-                    date: new Date(Date.now() - 86400000).toISOString(),
-                    receiptId: 'RCPT-1002',
-                },
-            ],
-            announcements: [
-                {
-                    id: '1',
-                    title: 'Winter Donation Drive Started',
-                    content: 'We are now accepting warm clothes and blankets for the winter drive.',
-                    date: new Date().toISOString(),
-                    author: 'Admin',
-                },
-            ],
-            auditLogs: []
-        };
-
-        // Write initial data to file
-        try {
-            fs.writeFileSync(DATA_FILE_PATH, JSON.stringify(initialData, null, 2));
-        } catch (error) {
-            console.error("Error creating initial data file:", error);
-        }
-
-        return initialData;
+        // Ensure connection is established when storage is used
+        dbConnect();
     }
 
     // Volunteers
-    getVolunteers() {
-        // Reload to ensure fresh data if multiple processes/reloads happened (basic sync)
-        this.data = this.loadData();
-        return this.data.volunteers;
+    async getVolunteers(): Promise<Volunteer[]> {
+        await dbConnect();
+        const volunteers = await VolunteerModel.find({});
+        // Convert Mongoose documents to plain objects if needed, though they are compatible
+        return JSON.parse(JSON.stringify(volunteers));
     }
 
-    addVolunteer(volunteer: Volunteer) {
-        this.data = this.loadData();
-        this.data.volunteers.push(volunteer);
-        this.saveData();
+    async addVolunteer(volunteer: Volunteer): Promise<void> {
+        await dbConnect();
+        await VolunteerModel.create(volunteer);
     }
 
-    updateVolunteer(id: string, data: Partial<Volunteer>) {
-        this.data = this.loadData();
-        const index = this.data.volunteers.findIndex(v => v.id === id);
-        if (index !== -1) {
-            this.data.volunteers[index] = { ...this.data.volunteers[index], ...data };
-            this.saveData();
-        }
+    async updateVolunteer(id: string, data: Partial<Volunteer>): Promise<void> {
+        await dbConnect();
+        await VolunteerModel.updateOne({ id }, { $set: data });
     }
 
     // Events
-    getEvents() {
-        this.data = this.loadData();
-        return this.data.events;
+    async getEvents(): Promise<Event[]> {
+        await dbConnect();
+        const events = await EventModel.find({});
+        return JSON.parse(JSON.stringify(events));
     }
 
-    addEvent(event: Event) {
-        this.data = this.loadData();
-        this.data.events.push(event);
-        this.saveData();
+    async addEvent(event: Event): Promise<void> {
+        await dbConnect();
+        await EventModel.create(event);
+    }
+
+    async updateEventStatus(id: string, status: 'UPCOMING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED'): Promise<void> {
+        await dbConnect();
+        await EventModel.updateOne({ id }, { $set: { status } });
+    }
+
+    async updateEventMetrics(id: string, metrics: EventMetrics): Promise<void> {
+        await dbConnect();
+        await EventModel.updateOne({ id }, { $set: { metrics } });
+    }
+
+    async updateEventFundraising(id: string, fundraising: EventFundraising): Promise<void> {
+        await dbConnect();
+        await EventModel.updateOne({ id }, { $set: { fundraising } });
+    }
+
+    async incrementVolunteerPoints(id: string, points: number): Promise<void> {
+        await dbConnect();
+        await VolunteerModel.updateOne({ id }, { $inc: { points } });
+    }
+
+    async getEventUpdates(eventId: string): Promise<EventUpdate[]> {
+        await dbConnect();
+        const updates = await EventUpdateModel.find({ eventId }).sort({ timestamp: -1 });
+        return JSON.parse(JSON.stringify(updates));
+    }
+
+    async addEventUpdate(update: EventUpdate): Promise<void> {
+        await dbConnect();
+        await EventUpdateModel.create(update);
     }
 
     // Donations
-    getDonations() {
-        this.data = this.loadData();
-        return this.data.donations;
+    async getDonations(): Promise<Donation[]> {
+        await dbConnect();
+        const donations = await DonationModel.find({});
+        return JSON.parse(JSON.stringify(donations));
     }
 
-    addDonation(donation: Donation) {
-        this.data = this.loadData();
-        this.data.donations.push(donation);
-        this.saveData();
+    async addDonation(donation: Donation): Promise<void> {
+        await dbConnect();
+        await DonationModel.create(donation);
     }
 
     // Announcements
-    getAnnouncements() {
-        this.data = this.loadData();
-        return this.data.announcements;
+    async getAnnouncements(): Promise<Announcement[]> {
+        await dbConnect();
+        const announcements = await AnnouncementModel.find({});
+        return JSON.parse(JSON.stringify(announcements));
     }
 
-    addAnnouncement(announcement: Announcement) {
-        this.data = this.loadData();
-        this.data.announcements.push(announcement);
-        this.saveData();
+    async addAnnouncement(announcement: Announcement): Promise<void> {
+        await dbConnect();
+        await AnnouncementModel.create(announcement);
     }
 
     // Audit Logs
-    getAuditLogs() {
-        this.data = this.loadData();
-        return this.data.auditLogs;
+    async getAuditLogs(): Promise<AuditLog[]> {
+        await dbConnect();
+        // Sort by timestamp descending by default for logs
+        const logs = await AuditLogModel.find({}).sort({ timestamp: -1 });
+        return JSON.parse(JSON.stringify(logs));
     }
 
-    addAuditLog(log: AuditLog) {
-        this.data = this.loadData();
-        this.data.auditLogs.unshift(log);
-        this.saveData();
+    async addAuditLog(log: AuditLog): Promise<void> {
+        await dbConnect();
+        await AuditLogModel.create(log);
+    }
+
+    // Staff
+    async getAllStaff(): Promise<any[]> {
+        await dbConnect();
+        const staff = await StaffModel.find({});
+        return JSON.parse(JSON.stringify(staff));
+    }
+
+    async getStaffByUsername(username: string): Promise<any | null> {
+        await dbConnect();
+        const staff = await StaffModel.findOne({ username });
+        return staff ? JSON.parse(JSON.stringify(staff)) : null;
+    }
+
+    async addStaff(staff: any): Promise<void> {
+        await dbConnect();
+        await StaffModel.create(staff);
     }
 }
 
 // Singleton instance
-export const storage = new JSONFileStorage();
+export const storage = new MongoStorage();

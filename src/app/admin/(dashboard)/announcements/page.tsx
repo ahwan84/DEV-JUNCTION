@@ -3,8 +3,8 @@ import { createAnnouncement } from "@/app/actions";
 import { storage } from "@/lib/storage";
 import { Megaphone } from "lucide-react";
 
-export default function AnnouncementsPage() {
-    const announcements = storage.getAnnouncements();
+export default async function AnnouncementsPage() {
+    const announcements = await storage.getAnnouncements();
 
     return (
         <div className="space-y-6">

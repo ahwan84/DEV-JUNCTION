@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { createEvent } from "@/app/actions";
 import { storage } from "@/lib/storage";
-import { Plus } from "lucide-react";
+import { Plus, Radio } from "lucide-react";
+import Link from "next/link";
 
-export default function EventsPage() {
-    const events = storage.getEvents();
+export default async function EventsPage() {
+    const events = await storage.getEvents();
 
     return (
         <div className="space-y-6">
@@ -50,6 +51,7 @@ export default function EventsPage() {
                                     <th className="px-6 py-4 font-medium">Event</th>
                                     <th className="px-6 py-4 font-medium">Date & Location</th>
                                     <th className="px-6 py-4 font-medium">Status</th>
+                                    <th className="px-6 py-4 font-medium text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y">
@@ -67,11 +69,22 @@ export default function EventsPage() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${event.status === 'UPCOMING' ? 'bg-green-100 text-green-700' :
-                                                    event.status === 'COMPLETED' ? 'bg-slate-100 text-slate-700' :
-                                                        'bg-red-100 text-red-700'
+                                                event.status === 'COMPLETED' ? 'bg-slate-100 text-slate-700' :
+                                                    'bg-red-100 text-red-700'
                                                 }`}>
-                                                {event.status}
+                                                {event.status.replace('_', ' ')}
                                             </span>
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <Link href={`/admin/events/${event.id}/live`}>
+                                                <Button size="sm" variant="outline" className={event.status === 'IN_PROGRESS' ? 'border-red-200 bg-red-50 text-red-600 hover:bg-red-100' : ''}>
+                                                    {event.status === 'IN_PROGRESS' ? (
+                                                        <>
+                                                            <Radio className="w-3 h-3 mr-1 animate-pulse" /> Live Control
+                                                        </>
+                                                    ) : 'Manage'}
+                                                </Button>
+                                            </Link>
                                         </td>
                                     </tr>
                                 ))}

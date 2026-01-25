@@ -1,10 +1,11 @@
 import { storage } from "@/lib/storage";
 import { Calendar, DollarSign, Users } from "lucide-react";
+import { Leaderboard } from "@/components/volunteer/leaderboard";
 
-export default function AdminDashboardPage() {
-    const volunteers = storage.getVolunteers();
-    const events = storage.getEvents();
-    const donations = storage.getDonations();
+export default async function AdminDashboardPage() {
+    const volunteers = await storage.getVolunteers();
+    const events = await storage.getEvents();
+    const donations = await storage.getDonations();
     const totalRaised = donations.reduce((acc, curr) => acc + curr.amount, 0);
 
     return (
@@ -73,6 +74,10 @@ export default function AdminDashboardPage() {
                         ))}
                     </div>
                 </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Leaderboard />
             </div>
         </div>
     );

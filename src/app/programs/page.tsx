@@ -1,13 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { storage } from "@/lib/storage";
-import { Calendar, MapPin, ArrowUpRight } from "lucide-react";
+import { Calendar, MapPin, ArrowUpRight, Radio, Play, HandCoins } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import Image from "next/image";
 import { getUserSession, getRegisteredEvents } from "@/app/actions";
 import { EventRegistrationButton } from "./register-button";
 
 export default async function ProgramsPage() {
-    const events = storage.getEvents();
+    const events = await storage.getEvents();
     const user = await getUserSession();
     const registeredEvents = await getRegisteredEvents();
     const registeredEventIds = registeredEvents.map(e => e.id);
@@ -97,13 +98,39 @@ export default async function ProgramsPage() {
                                 </p>
 
                                 <div className="pt-6 border-t border-slate-100 mt-auto">
-                                    <EventRegistrationButton
-                                        eventId={event.id}
-                                        eventTitle={event.title}
-                                        isLoggedIn={!!user}
-                                        eventStatus={event.status}
-                                        isRegistered={registeredEventIds.includes(event.id)}
-                                    />
+                                    {/* Fundraising Progress */
+                                        event.fundraising && (
+                                            <div className="mb-4">
+                                                <div className="flex justify-between text-xs mb-1">
+                                                    <span className="font-semibold text-slate-700">₹{event.fundraising.raised.toLocaleString()} raised</span>
+                                                    <span className="text-slate-500">of ₹{event.fundraising.goal.toLocaleString()}</span>
+                                                </div>
+                                                <Progress value={(event.fundraising.raised / event.fundraising.goal) * 100} className="h-2" />
+                                            </div>
+                                        )}
+
+                                    {event.status === 'IN_PROGRESS' && (
+                                        <Link href={`/programs/${event.id}/live`} className="block mb-3">
+                                            <Button className="w-full bg-red-600 hover:bg-red-700 text-white animate-pulse">
+                                                <Radio className="mr-2 h-4 w-4" />
+                                                View Live Updates
+                                            </Button>
+                                        </Link>
+                                    )}
+
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <EventRegistrationButton
+                                            eventId={event.id}
+                                            eventTitle={event.title}
+                                            isLoggedIn={!!user}
+                                            eventStatus={event.status}
+                                            isRegistered={registeredEventIds.includes(event.id)}
+                                        />
+                                        <Button variant="outline" className="w-full border-green-600 text-green-700 hover:bg-green-50">
+                                            <HandCoins className="mr-2 h-4 w-4" />
+                                            Donate
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

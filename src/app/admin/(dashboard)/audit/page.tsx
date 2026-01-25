@@ -1,8 +1,26 @@
 import { storage } from "@/lib/storage";
-import { FileText } from "lucide-react";
+import { FileText, ShieldAlert } from "lucide-react";
+import { getStaffSession } from "@/app/actions";
 
-export default function AuditPage() {
-    const logs = storage.getAuditLogs();
+export default async function AuditPage() {
+    const session = await getStaffSession();
+    const canView = session?.role === 'SUPER_ADMIN' || session?.permissions?.includes('VIEW_AUDITS');
+
+    if (!canView) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-4">
+                <div className="p-4 bg-red-50 rounded-full">
+                    <ShieldAlert className="h-12 w-12 text-red-500" />
+                </div>
+                <h1 className="text-2xl font-bold text-slate-900">Access Denied</h1>
+                <p className="text-slate-500 max-w-md">
+                    You do not have permission to view audit logs. Please contact an administrator if you believe this is an error.
+                </p>
+            </div>
+        );
+    }
+
+    const logs = await storage.getAuditLogs();
 
     return (
         <div className="space-y-6">
