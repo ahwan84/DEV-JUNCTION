@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { createEvent } from "@/app/actions";
+import { createEvent, endEvent } from "@/app/actions";
 import { storage } from "@/lib/storage";
 import { Plus, Radio } from "lucide-react";
 import Link from "next/link";
@@ -44,7 +44,7 @@ export default async function EventsPage() {
 
                 {/* Events List */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
                         <table className="w-full text-sm text-left">
                             <thead className="bg-slate-50 text-muted-foreground border-b">
                                 <tr>
@@ -76,15 +76,30 @@ export default async function EventsPage() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <Link href={`/admin/events/${event.id}/live`}>
-                                                <Button size="sm" variant="outline" className={event.status === 'IN_PROGRESS' ? 'border-red-200 bg-red-50 text-red-600 hover:bg-red-100' : ''}>
-                                                    {event.status === 'IN_PROGRESS' ? (
-                                                        <>
-                                                            <Radio className="w-3 h-3 mr-1 animate-pulse" /> Live Control
-                                                        </>
-                                                    ) : 'Manage'}
-                                                </Button>
-                                            </Link>
+                                            <div className="flex gap-2 justify-end">
+                                                <Link href={`/admin/events/${event.id}/live`}>
+                                                    <Button size="sm" variant="outline" className={event.status === 'IN_PROGRESS' ? 'border-red-200 bg-red-50 text-red-600 hover:bg-red-100' : ''}>
+                                                        {event.status === 'IN_PROGRESS' ? (
+                                                            <>
+                                                                <Radio className="w-3 h-3 mr-1 animate-pulse" /> Live Control
+                                                            </>
+                                                        ) : 'Manage'}
+                                                    </Button>
+                                                </Link>
+                                                {event.status === 'IN_PROGRESS' && (
+                                                    <form action={async () => {
+                                                        'use server';
+                                                        await endEvent(event.id);
+                                                    }}>
+                                                        <Button size="sm" variant="destructive">End Event</Button>
+                                                    </form>
+                                                )}
+                                                {event.status === 'COMPLETED' && (
+                                                    <Link href={`/admin/events/${event.id}/feedback`}>
+                                                        <Button size="sm" variant="secondary">View Feedback</Button>
+                                                    </Link>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

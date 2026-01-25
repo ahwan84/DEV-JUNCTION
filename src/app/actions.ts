@@ -181,12 +181,7 @@ export async function startEvent(eventId: string) {
     revalidatePath('/admin/events');
 }
 
-export async function endEvent(eventId: string) {
-    await storage.updateEventStatus(eventId, 'COMPLETED');
-    revalidatePath(`/programs/${eventId}/live`);
-    revalidatePath('/programs');
-    revalidatePath('/admin/events');
-}
+// Duplicate endEvent removed
 
 export async function postEventUpdate(eventId: string, formData: FormData) {
     const user = await getUserSession();
@@ -470,4 +465,50 @@ export async function logoutStaff() {
     (await cookies()).delete('admin_session');
     revalidatePath('/admin/login');
     revalidatePath('/');
+}
+
+export async function endEvent(eventId: string) {
+    const user = await getStaffSession();
+    // In a real app, check for admin role here
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
+
+    await storage.updateEventStatus(eventId, 'COMPLETED');
+    revalidatePath('/admin/events');
+    revalidatePath('/dashboard');
+}
+
+export async function submitFeedback(formData: FormData) {
+    const user = await getUserSession();
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
+
+    const eventId = formData.get('eventId') as string;
+    const rating = parseInt(formData.get('rating') as string);
+    const comment = formData.get('comment') as string;
+
+    if (!eventId || !rating || !comment) {
+        throw new Error("Missing fields");
+    }
+
+    const feedback = {
+        id: crypto.randomUUID(),
+        eventId,
+        volunteerId: user.id,
+        volunteerName: user.name,
+        rating,
+        comment,
+        timestamp: new Date().toISOString()
+    };
+
+    await storage.addFeedback(feedback);
+    revalidatePath('/dashboard');
+    revalidatePath(`/admin/events/${eventId}/feedback`);
+}
+
+export async function getEventFeedback(eventId: string) {
+    // Check admin session ideally
+    return await storage.getFeedbackByEvent(eventId);
 }

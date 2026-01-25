@@ -5,6 +5,7 @@ import { Star, Clock, Bell, Calendar, MapPin } from "lucide-react";
 import { PasswordResetForm } from "./password-form";
 import { ProfileEditDialog } from "./profile-edit";
 import { Leaderboard } from "@/components/volunteer/leaderboard";
+import { FeedbackForm } from "@/components/volunteer/feedback-form";
 
 export default async function DashboardPage() {
     // Server-side call to get user session
@@ -110,7 +111,12 @@ export default async function DashboardPage() {
                                                 {event.location}
                                             </div>
                                         </div>
-                                        <p className="text-sm text-slate-600">{event.description}</p>
+                                        <div className="flex justify-between items-center mt-4">
+                                            <p className="text-sm text-slate-600">{event.description}</p>
+                                            {event.status === 'COMPLETED' && (
+                                                <FeedbackForm eventId={event.id} eventTitle={event.title} />
+                                            )}
+                                        </div>
                                     </div>
                                 ))
                             ) : (

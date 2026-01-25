@@ -1,6 +1,6 @@
-import { Volunteer, Event, Donation, Announcement, AuditLog, EventUpdate, EventMetrics, EventFundraising } from '@/types';
+import { Volunteer, Event, Donation, Announcement, AuditLog, EventUpdate, EventMetrics, EventFundraising, Feedback } from '@/types';
 import dbConnect from './db';
-import { VolunteerModel, EventModel, DonationModel, AnnouncementModel, AuditLogModel, EventUpdateModel, StaffModel } from './models';
+import { VolunteerModel, EventModel, DonationModel, AnnouncementModel, AuditLogModel, EventUpdateModel, StaffModel, FeedbackModel } from './models';
 
 class MongoStorage {
 
@@ -123,6 +123,18 @@ class MongoStorage {
     async addStaff(staff: any): Promise<void> {
         await dbConnect();
         await StaffModel.create(staff);
+    }
+
+    // Feedback
+    async addFeedback(feedback: Feedback): Promise<void> {
+        await dbConnect();
+        await FeedbackModel.create(feedback);
+    }
+
+    async getFeedbackByEvent(eventId: string): Promise<Feedback[]> {
+        await dbConnect();
+        const feedback = await FeedbackModel.find({ eventId }).sort({ timestamp: -1 });
+        return JSON.parse(JSON.stringify(feedback));
     }
 }
 

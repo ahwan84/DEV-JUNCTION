@@ -15,7 +15,7 @@ export default async function VolunteersPage() {
                 <h1 className="text-3xl font-bold">Volunteer Management</h1>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border overflow-hidden overflow-x-auto">
                 <table className="w-full text-sm text-left">
                     <thead className="bg-slate-50 text-muted-foreground border-b">
                         <tr>

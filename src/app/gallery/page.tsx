@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CompareSlider } from "@/components/ui/compare-slider";
 
 export default function GalleryPage() {
     // Placeholder images
@@ -12,9 +13,36 @@ export default function GalleryPage() {
     ];
 
     return (
-        <div className="container py-12">
-            <h1 className="text-4xl font-bold mb-4">Photo Gallery</h1>
-            <p className="text-xl text-muted-foreground mb-10">Glimpses of our work and the smiles we've shared.</p>
+        <div className="container py-12 space-y-12">
+            <div className="text-center max-w-2xl mx-auto">
+                <h1 className="text-4xl font-bold mb-4">Photo Gallery</h1>
+                <p className="text-xl text-muted-foreground">Glimpses of our work and the smiles we've shared.</p>
+            </div>
+
+            {/* Before/After Section */}
+            <div className="space-y-6">
+                <h2 className="text-2xl font-bold text-center">Our Impact: Before & After</h2>
+                <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-2">
+                        <CompareSlider
+                            beforeImage="https://images.unsplash.com/photo-1599059813005-11265ba4b4ce?q=80&w=2070&auto=format&fit=crop"
+                            afterImage="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2070&auto=format&fit=crop"
+                            beforeLabel="Neglected School"
+                            afterLabel="Renovated Classroom"
+                        />
+                        <p className="text-center text-sm text-muted-foreground">Renovating local schools to provide better learning environments.</p>
+                    </div>
+                    <div className="space-y-2">
+                        <CompareSlider
+                            beforeImage="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop"
+                            afterImage="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop"
+                            beforeLabel="Empty Food Bank"
+                            afterLabel="Stocked & Serving"
+                        />
+                        <p className="text-center text-sm text-muted-foreground">Restocking community food banks to fight hunger.</p>
+                    </div>
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {images.map((src, i) => (

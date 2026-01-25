@@ -1,5 +1,5 @@
 import mongoose, { Schema, Model } from 'mongoose';
-import { Volunteer, Event, Donation, Announcement, AuditLog, EventUpdate } from '@/types';
+import { Volunteer, Event, Donation, Announcement, AuditLog, EventUpdate, Feedback } from '@/types';
 
 // Volunteer Schema
 const VolunteerSchema = new Schema<Volunteer>({
@@ -93,6 +93,17 @@ const StaffSchema = new Schema({
     permissions: { type: [String], default: [] }
 });
 
+// Feedback Schema
+const FeedbackSchema = new Schema({
+    id: { type: String, required: true, unique: true },
+    eventId: { type: String, required: true },
+    volunteerId: { type: String, required: true },
+    volunteerName: { type: String, required: true },
+    rating: { type: Number, required: true },
+    comment: { type: String, required: true },
+    timestamp: { type: String, required: true }
+});
+
 // Check if models exist before compiling to prevent OverwriteModelError
 export const VolunteerModel: Model<Volunteer> = mongoose.models.Volunteer || mongoose.model<Volunteer>('Volunteer', VolunteerSchema);
 export const EventModel: Model<Event> = mongoose.models.Event || mongoose.model<Event>('Event', EventSchema);
@@ -101,3 +112,4 @@ export const DonationModel: Model<Donation> = mongoose.models.Donation || mongoo
 export const AnnouncementModel: Model<Announcement> = mongoose.models.Announcement || mongoose.model<Announcement>('Announcement', AnnouncementSchema);
 export const AuditLogModel: Model<AuditLog> = mongoose.models.AuditLog || mongoose.model<AuditLog>('AuditLog', AuditLogSchema);
 export const StaffModel = mongoose.models.Staff || mongoose.model('Staff', StaffSchema);
+export const FeedbackModel = mongoose.models.Feedback || mongoose.model('Feedback', FeedbackSchema);

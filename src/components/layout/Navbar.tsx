@@ -22,6 +22,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from 'react';
 import { GoogleTranslate } from '@/components/google-translate';
@@ -143,11 +144,51 @@ export function Navbar({ user }: NavbarProps) {
                     <Link href="/donate">
                         <Button>Donate Now</Button>
                     </Link>
-                    {/* Mobile Menu Trigger */}
-                    <Button variant="ghost" size="icon" className="md:hidden">
-                        <Menu className="h-5 w-5" />
-                        <span className="sr-only">Toggle menu</span>
-                    </Button>
+                    {/* Mobile Menu */}
+                    <Sheet>
+                        <SheetTrigger asChild>
+                            <Button variant="ghost" size="icon" className="md:hidden">
+                                <Menu className="h-5 w-5" />
+                                <span className="sr-only">Toggle menu</span>
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                            <nav className="flex flex-col gap-4 mt-8">
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.href}
+                                        href={link.href}
+                                        className={cn(
+                                            "text-lg font-medium transition-colors hover:text-primary",
+                                            pathname === link.href
+                                                ? "text-primary"
+                                                : "text-slate-600"
+                                        )}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
+                                <hr className="my-4" />
+                                {user ? (
+                                    <>
+                                        <Link href="/dashboard" className="text-lg font-medium hover:text-primary">
+                                            Dashboard
+                                        </Link>
+                                        <button onClick={handleLogout} className="text-lg font-medium text-left text-red-600 hover:text-red-700">
+                                            Log out
+                                        </button>
+                                    </>
+                                ) : (
+                                    <Link href="/login" className="text-lg font-medium hover:text-primary">
+                                        Login
+                                    </Link>
+                                )}
+                                <Link href="/donate" className="mt-4">
+                                    <Button className="w-full">Donate Now</Button>
+                                </Link>
+                            </nav>
+                        </SheetContent>
+                    </Sheet>
                 </div>
             </div>
         </header>

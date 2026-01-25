@@ -25,7 +25,7 @@ export function MobileSidebar() {
                     <span className="sr-only">Toggle menu</span>
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64">
+            <SheetContent side="left" className="p-0 w-64 flex flex-col bg-white">
                 <div className="p-6 border-b">
                     <Link href="/admin/dashboard" className="flex items-center space-x-2">
                         <ShieldCheck className="h-6 w-6 text-primary" />

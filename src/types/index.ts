@@ -96,3 +96,13 @@ export interface Staff {
     role: 'SUPER_ADMIN' | 'STAFF';
     permissions: string[]; // 'VIEW_AUDITS', 'APPROVE_USERS'
 }
+
+export interface Feedback {
+    id: string;
+    eventId: string;
+    volunteerId: string;
+    volunteerName: string;
+    rating: number; // 1-5
+    comment: string;
+    timestamp: string;
+}
