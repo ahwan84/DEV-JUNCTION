@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { CheckCircle, Download, Heart } from "lucide-react";
 
+import { useSearchParams } from "next/navigation";
+
 export default function DonatePage() {
+    const searchParams = useSearchParams();
+    const eventId = searchParams.get('eventId');
+
     const [step, setStep] = useState<'amount' | 'details' | 'payment' | 'receipt'>('amount');
     const [amount, setAmount] = useState<number>(1000);
     const [customAmount, setCustomAmount] = useState<string>('');
@@ -188,7 +193,7 @@ export default function DonatePage() {
                 )}
 
                 {step === 'payment' && (
-                    <PaymentProcessing onComplete={handlePayment} amount={amount} userDetails={details} />
+                    <PaymentProcessing onComplete={handlePayment} amount={amount} userDetails={details} eventId={eventId} />
                 )}
             </div>
         </div>
@@ -196,10 +201,10 @@ export default function DonatePage() {
 }
 
 import { UPIQR } from "@/components/ui/upi-qr";
-import { createRazorpayOrder, sendThankYouEmail } from "@/app/actions";
+import { createRazorpayOrder, processDonation } from "@/app/actions";
 import Script from "next/script";
 
-function PaymentProcessing({ onComplete, amount, userDetails }: { onComplete: () => void, amount: number, userDetails: any }) {
+function PaymentProcessing({ onComplete, amount, userDetails, eventId }: { onComplete: () => void, amount: number, userDetails: any, eventId: string | null }) {
     const [loading, setLoading] = useState(false);
 
     const handleRazorpayPayment = async () => {
@@ -218,7 +223,12 @@ function PaymentProcessing({ onComplete, amount, userDetails }: { onComplete: ()
                 console.log("Mock Payment Mode Active");
                 setTimeout(async () => {
                     alert("Mock Payment Successful! (Update .env for real payments)");
-                    await sendThankYouEmail(userDetails.email, userDetails.name, amount);
+                    await processDonation({
+                        amount,
+                        donorName: userDetails.name,
+                        donorEmail: userDetails.email,
+                        eventId: eventId || undefined
+                    });
                     onComplete();
                 }, 1500);
                 return;
@@ -234,8 +244,14 @@ function PaymentProcessing({ onComplete, amount, userDetails }: { onComplete: ()
                 order_id: order.orderId,
                 handler: async function (response: any) {
                     console.log("Payment Successful", response);
-                    // 3. Send Email on Success
-                    await sendThankYouEmail(userDetails.email, userDetails.name, amount);
+                    // 3. Process Donation (DB + Email)
+                    await processDonation({
+                        amount,
+                        donorName: userDetails.name,
+                        donorEmail: userDetails.email,
+                        eventId: eventId || undefined,
+                        paymentId: response.razorpay_payment_id
+                    });
                     onComplete();
                 },
                 prefill: {
@@ -267,7 +283,12 @@ function PaymentProcessing({ onComplete, amount, userDetails }: { onComplete: ()
 
     const handleUPIComplete = async () => {
         // For UPI Manual check, we just send the email assuming they paid
-        await sendThankYouEmail(userDetails.email, userDetails.name, amount);
+        await processDonation({
+            amount,
+            donorName: userDetails.name,
+            donorEmail: userDetails.email,
+            eventId: eventId || undefined
+        });
         onComplete();
     };
 

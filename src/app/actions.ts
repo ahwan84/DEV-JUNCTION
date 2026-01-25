@@ -1,10 +1,12 @@
 'use server';
 
 import { storage } from "@/lib/storage";
-import { Volunteer, Event, Announcement, EventUpdate, Staff, EventMetrics } from "@/types";
+import { Volunteer, Event, Announcement, EventUpdate, Staff, EventMetrics, Donation } from "@/types";
 import { revalidatePath } from "next/cache";
 import { cookies } from 'next/headers';
 import Razorpay from 'razorpay';
+
+// ... (keep existing imports and actions)
 
 // Volunteer Actions
 export async function submitVolunteerApplication(formData: FormData) {
@@ -181,46 +183,38 @@ export async function startEvent(eventId: string) {
     revalidatePath('/admin/events');
 }
 
-// Duplicate endEvent removed
-
 export async function postEventUpdate(eventId: string, formData: FormData) {
     const user = await getUserSession();
-    if (!user) return { success: false, error: 'Not authenticated' };
+    const staff = await getStaffSession();
+
+    if (!user && !staff) return { success: false, error: 'Not authenticated' };
+
+    const authorId = staff ? 'ADMIN' : user!.id;
+    const authorName = staff ? 'Event Admin' : user!.name;
 
     const content = formData.get('content') as string;
-    // In a real app, handle image upload to S3/Blob storage here.
-    // For MVP, we'll support external URLs or just ignore image if file is uploaded
-    // or assume the user pastes a URL in a text field if that matches requirement.
-    // Let's assume content is text for now, maybe add imageUrl later or via a simple URL input.
-    // Wait, the prompt implies "one can start updating progress". Text + Image is best.
-    // Let's check if the user uploaded an image. Simulating file upload is hard without cloud storage.
-    // I will look for 'imageUrl' in formData (client can mock upload or provide URL).
     const imageUrl = formData.get('imageUrl') as string;
 
     const newUpdate: EventUpdate = {
         id: Math.random().toString(36).substring(7),
         eventId,
         content,
-        authorId: user.id,
-        authorName: user.name,
+        authorId,
+        authorName,
         timestamp: new Date().toISOString(),
         imageUrl: imageUrl || undefined
     };
 
     await storage.addEventUpdate(newUpdate);
 
-    // Create audit log for updates? Maybe overkill, but good for tracking.
-    // Skipping to keep noise down.
-
     revalidatePath(`/programs/${eventId}/live`);
-
     revalidatePath(`/admin/events/${eventId}/live`);
     return { success: true };
 }
 
 export async function updateEventMetrics(eventId: string, formData: FormData) {
-    const user = await getUserSession();
-    if (!user) return { success: false, error: 'Not authenticated' };
+    const staff = await getStaffSession();
+    if (!staff) return { success: false, error: 'Unauthorized: Staff only' };
 
     // Parse metrics
     const metrics: EventMetrics = {
@@ -249,11 +243,40 @@ export async function donateToEvent(eventId: string, amount: number) {
 
     await storage.updateEventFundraising(eventId, newFundraising);
 
-    // Also log donation... (skipped for brevity)
-
     revalidatePath('/programs');
     revalidatePath(`/programs/${eventId}/live`);
     return { success: true };
+}
+
+export async function processDonation(data: {
+    amount: number;
+    donorName: string;
+    donorEmail: string;
+    eventId?: string;
+    paymentId?: string;
+}) {
+    // 1. Record Donation
+    const donation: Donation = {
+        id: Math.random().toString(36).substring(7),
+        donorName: data.donorName,
+        donorEmail: data.donorEmail,
+        amount: data.amount,
+        date: new Date().toISOString(),
+        campaignId: data.eventId,
+        receiptId: "RCPT-" + Date.now()
+    };
+
+    await storage.addDonation(donation);
+
+    // 2. Update Event Fundraising if applicable
+    if (data.eventId) {
+        await donateToEvent(data.eventId, data.amount);
+    }
+
+    // 3. Send Email
+    await sendThankYouEmail(data.donorEmail, data.donorName, data.amount);
+
+    return { success: true, receiptId: donation.receiptId };
 }
 
 export async function getEventFeed(eventId: string) {
