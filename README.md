@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HopeConnect ❤️  
+### Empowering Communities, Transforming Lives
 
-## Getting Started
+**HopeConnect** is a modern, transparent NGO web platform that connects **donors, volunteers, and communities** to drive real social impact.  
+Built with **Next.js, TypeScript, and Tailwind CSS**, the platform focuses on **trust, clarity, and measurable change**.
 
-First, run the development server:
+🌐 **Live Website**: https://hopeconnect-gareebaarav.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌟 Mission
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+HopeConnect aims to:
+- Enable **transparent donations**
+- Encourage **community volunteering**
+- Showcase **real-time impact and fund utilization**
+- Build **trust through verified data and reports**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🖥️ Website Preview
 
-To learn more about Next.js, take a look at the following resources:
+### 🏠 Home Page
+> Clear mission statement, ongoing campaigns, and strong call-to-action.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+![Home Page](./screenshots/home.png)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### 📊 Impact & Transparency Dashboard
+> Detailed fund utilization with verified breakdowns and trust indicators.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+![Impact Page](./screenshots/impact.png)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> *(Screenshots shown above — add them inside a `/screenshots` folder in the repo)*
+
+---
+
+## ✨ Key Features
+
+- 🏠 **Hero-based Landing Page** with active campaign highlights  
+- 📊 **Fund Utilization Report** with percentage-based breakdown  
+- ✅ **Trust Section**
+  - Registered NGO details
+  - Tax benefit info (80G)
+  - Secure payment indicators  
+- 🤝 **Volunteer Section** to onboard contributors  
+- 💖 **Donate Now Flow** with strong CTA placement  
+- 📱 Fully **responsive & mobile-friendly UI**  
+- 🎨 Clean, modern UI using Tailwind CSS  
+- ⚡ Fast performance with Next.js App Router  
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|--------|------------|
+| Framework | Next.js |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| UI | React Components |
+| Deployment | Vercel |
+| Routing | App Router |
+| Security | SSL-ready payment integration |
+
+---
+
+## 📁 Project Structure
+
+```plaintext
+DEV-JUNCTION
+├── public
+├── src
+│   ├── app
+│   ├── components
+│   ├── sections
+│   ├── styles
+│   └── utils
+├── screenshots
+│   ├── home.png
+│   └── impact.png
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── next.config.ts
