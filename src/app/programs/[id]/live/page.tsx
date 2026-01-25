@@ -1,5 +1,5 @@
 import { storage } from "@/lib/storage";
-import { getUserSession } from "@/app/actions";
+import { getUserSession, getStaffSession } from "@/app/actions";
 import { LiveFeed } from "@/components/event/live-feed";
 import { UpdateForm } from "@/components/event/update-form";
 import { MetricsForm } from "@/components/event/metrics-form";
@@ -17,6 +17,8 @@ export default async function LiveEventPage({ params }: { params: Promise<{ id: 
     if (!event) return notFound();
 
     const user = await getUserSession();
+    const staffSession = await getStaffSession();
+    const isAdmin = !!staffSession;
 
     // Check if user is registered for this event to allow posting
     const volunteers = await storage.getVolunteers();
@@ -99,20 +101,29 @@ export default async function LiveEventPage({ params }: { params: Promise<{ id: 
 
                 {/* Sidebar */}
                 <div className="lg:col-span-1 space-y-6">
-                    {isLive && isRegistered ? (
+                    {/* Show forms if:
+                        1. Event is Live AND
+                        2. (User is Admin OR User is Registered Volunteer)
+                    */}
+                    {isLive && (isAdmin || isRegistered) ? (
                         <div className="sticky top-24">
                             <UpdateForm eventId={id} />
 
-                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800 mb-6">
-                                <p className="font-semibold mb-1">You are a confirmed volunteer!</p>
-                                <p>Share your photos and updates directly to the timeline.</p>
-                            </div>
+                            {isRegistered && !isAdmin && (
+                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800 mb-6">
+                                    <p className="font-semibold mb-1">You are a confirmed volunteer!</p>
+                                    <p>Share your photos and updates directly to the timeline.</p>
+                                </div>
+                            )}
 
-                            <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                                <h3 className="font-bold text-slate-900 mb-3">Update Metrics</h3>
-                                <p className="text-xs text-slate-500 mb-4">Help us track our impact in real-time.</p>
-                                <MetricsForm eventId={id} metrics={event.metrics} />
-                            </div>
+                            {/* Only Admins can update metrics */}
+                            {isAdmin && (
+                                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mt-6">
+                                    <h3 className="font-bold text-slate-900 mb-3">Update Metrics</h3>
+                                    <p className="text-xs text-slate-500 mb-4">Help us track our impact in real-time.</p>
+                                    <MetricsForm eventId={id} metrics={event.metrics} />
+                                </div>
+                            )}
                         </div>
                     ) : (
                         !isLive && event.status === 'UPCOMING' && (

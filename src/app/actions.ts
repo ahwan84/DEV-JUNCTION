@@ -185,7 +185,12 @@ export async function startEvent(eventId: string) {
 
 export async function postEventUpdate(eventId: string, formData: FormData) {
     const user = await getUserSession();
-    if (!user) return { success: false, error: 'Not authenticated' };
+    const staff = await getStaffSession();
+
+    if (!user && !staff) return { success: false, error: 'Not authenticated' };
+
+    const authorId = staff ? 'ADMIN' : user!.id;
+    const authorName = staff ? 'Event Admin' : user!.name;
 
     const content = formData.get('content') as string;
     // In a real app, handle image upload to S3/Blob storage here.
@@ -201,8 +206,8 @@ export async function postEventUpdate(eventId: string, formData: FormData) {
         id: Math.random().toString(36).substring(7),
         eventId,
         content,
-        authorId: user.id,
-        authorName: user.name,
+        authorId,
+        authorName,
         timestamp: new Date().toISOString(),
         imageUrl: imageUrl || undefined
     };
@@ -219,8 +224,8 @@ export async function postEventUpdate(eventId: string, formData: FormData) {
 }
 
 export async function updateEventMetrics(eventId: string, formData: FormData) {
-    const user = await getUserSession();
-    if (!user) return { success: false, error: 'Not authenticated' };
+    const staff = await getStaffSession();
+    if (!staff) return { success: false, error: 'Unauthorized: Staff only' };
 
     // Parse metrics
     const metrics: EventMetrics = {
